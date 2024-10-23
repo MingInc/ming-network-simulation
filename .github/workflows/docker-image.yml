@@ -15,9 +15,15 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-      
+
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
+    
+    - name: Install Docker Compose
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose --version
 
     - name: Build Docker Compose services
       run: docker-compose up --build -d
@@ -31,7 +37,6 @@ jobs:
 
     - name: Run tests (if you have tests set up)
       run: |
-        # Example of running tests using curl to check responses from each node
         curl http://localhost:3001 | grep "Hello from Node 1"
         curl http://localhost:3002 | grep "Hello from Node 2"
         curl http://localhost:3003 | grep "Hello from Node 3"
