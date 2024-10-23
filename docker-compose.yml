@@ -1,0 +1,38 @@
+version: '3'
+services:
+  node1:
+    container_name: ming-node1
+    build:
+      context: ./node1
+    ports:
+      - "3001:3000"
+    networks:
+      - ming-network
+    environment:
+      - NODE_ID=node1
+
+  node2:
+    container_name: ming-node2
+    build:
+      context: ./node2
+    ports:
+      - "3002:3000"
+    networks:
+      - ming-network
+    environment:
+      - NODE_ID=node2
+
+  node3:
+    container_name: ming-node3
+    build:
+      context: ./node3
+    ports:
+      - "3003:3000"
+    networks:
+      - ming-network
+    environment:
+      - NODE_ID=node3
+
+networks:
+  ming-network:
+    driver: bridge
