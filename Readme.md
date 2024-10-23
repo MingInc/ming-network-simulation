@@ -24,8 +24,8 @@ Make sure you have the following installed:
 First, clone this repository to your local machine:
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/MingInc/ming-network-simulation.git
+cd ming-network-simulation
 ```
 
 ### **3. Docker Compose Setup**
