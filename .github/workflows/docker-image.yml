@@ -1,19 +1,40 @@
-name: Docker Image CI
+name: CI for Ming Distributed Network
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-
-  build:
-
+  build-and-test:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run:  docker-compose up --build && docker exec -it ming-node1 /bin/sh && curl http://ming-node2:3000
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
 
+    - name: Build Docker Compose services
+      run: docker-compose up --build -d
+
+    - name: Run container health check
+      run: |
+        sleep 10 # Wait for containers to initialize
+        curl -f http://localhost:3001 || exit 1
+        curl -f http://localhost:3002 || exit 1
+        curl -f http://localhost:3003 || exit 1
+
+    - name: Run tests (if you have tests set up)
+      run: |
+        # Example of running tests using curl to check responses from each node
+        curl http://localhost:3001 | grep "Hello from Node 1"
+        curl http://localhost:3002 | grep "Hello from Node 2"
+        curl http://localhost:3003 | grep "Hello from Node 3"
+
+    - name: Tear down Docker Compose
+      run: docker-compose down
