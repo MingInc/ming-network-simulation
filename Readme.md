@@ -161,4 +161,4 @@ The current phase focuses on basic communication between nodes using HTTP reques
 This project demonstrates a foundational setup for simulating a distributed network using Docker. As we progress through the milestones, this environment will evolve to include more complex networking, redundancy, and decentralized hosting capabilities. Stay tuned!
 
 ## **Screenshots**
-![Screenshot]("/screenshots/1.png")
+![Screenshot](https://raw.githubusercontent.com/MingInc/ming-network-simulation/refs/heads/main/screenshots/1.png)
