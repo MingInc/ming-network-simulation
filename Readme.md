@@ -1,164 +1,98 @@
-# **Ming Distributed Network Simulation**
+# Ming Distributed Network Simulation
 
-This repository simulates a distributed network using Docker containers as nodes. Each node is an independent Docker container running a lightweight Express server, capable of communicating with other nodes over a shared network.
+This project simulates a distributed network with Docker containers acting as nodes. Each node runs an Express server, and tools like **Portainer** and **Uptime Kuma** are integrated for monitoring and management. The containers are networked using Docker's `bridge` driver, allowing internal communication between the nodes.
 
-## **Overview**
+## Architecture
 
-This project demonstrates a basic setup for simulating a distributed network using Docker. Each node in the network:
-- Runs an Express web server.
-- Is part of a shared Docker network that allows direct communication between nodes.
-- Can access other nodes via HTTP requests.
-  
-This setup mimics how different services can interact with each other in a distributed system, laying the groundwork for more advanced use cases in later phases.
+- **Node Containers** (`node1`, `node2`, `node3`): These containers simulate individual nodes in the distributed network. Each runs an Express server accessible via unique ports (3001, 3002, and 3003 respectively).
+- **Portainer**: A web-based Docker management tool that helps in managing and monitoring containers, images, volumes, and networks. It also provides a GUI for Docker container administration.
+- **Uptime Kuma**: An uptime monitoring tool to track the availability and uptime of the running services, integrated with the Docker socket for direct container monitoring.
 
-## **Setup and Usage Instructions**
+## Prerequisites
 
-### **1. Prerequisites**
+Make sure the following are installed on your system:
+- Docker
+- Docker Compose
 
-Make sure you have the following installed:
-- Docker: [Install Docker](https://docs.docker.com/get-docker/)
-- Docker Compose: [Install Docker Compose](https://docs.docker.com/compose/install/)
+## Setup
 
-### **2. Cloning the Repository**
+1. **Clone the repository**:
 
-First, clone this repository to your local machine:
+   ```bash
+   git clone https://github.com/your-repo/ming-distributed-network.git
+   cd ming-distributed-network
+   ```
+
+2. **Build and run the containers**:
+
+   Run the following command to spin up all the services:
+
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access the Services**:
+
+   - **Node1 Express Server**: [http://localhost:3001](http://localhost:3001)
+   - **Node2 Express Server**: [http://localhost:3002](http://localhost:3002)
+   - **Node3 Express Server**: [http://localhost:3003](http://localhost:3003)
+   - **Portainer Dashboard**: [http://localhost:9000](http://localhost:9000)
+   - **Uptime Kuma Dashboard**: [http://localhost:8080](http://localhost:8080)
+
+4. **Monitor Uptime**:
+   - Uptime Kuma will be available on port `8080`. You can set up monitors for your services from the dashboard.
+
+5. **Manage Docker Containers**:
+   - Access **Portainer** on port `9000` to manage and monitor all containers.
+
+## Directory Structure
 
 ```bash
-git clone https://github.com/MingInc/ming-network-simulation.git
-cd ming-network-simulation
-```
-
-### **3. Docker Compose Setup**
-
-The `docker-compose.yml` file defines three services (nodes) running in their own containers. Each service runs an Express server, and the containers are connected via a Docker network for communication.
-
-Here is a breakdown of the services:
-- **Node 1:** Runs on port 3000 (internally) and maps to port 3001 on the host machine.
-- **Node 2:** Runs on port 3000 (internally) and maps to port 3002 on the host machine.
-- **Node 3:** Runs on port 3000 (internally) and maps to port 3003 on the host machine.
-
-#### **Docker Compose Commands**
-
-- **Build and Start Containers:**
-
-   To build the Docker images and start the containers, run:
-
-   ```bash
-   docker-compose up --build
-   ```
-
-   This will start three containers, each hosting an Express server.
-
-- **Stopping Containers:**
-
-   To stop the containers, run:
-
-   ```bash
-   docker-compose down
-   ```
-
-- **Access Containers:**
-
-   You can access the running containers' terminal by using:
-
-   ```bash
-   docker exec -it <container_name> /bin/sh
-   ```
-
-   Example:
-
-   ```bash
-   docker exec -it ming-node1 /bin/sh
-   ```
-
-### **4. Node Communication**
-
-Each node exposes an Express server accessible via HTTP from the host machine and other nodes in the network.
-
-- **Access Express Servers from the Host Machine:**
-
-  - **Node 1:** http://localhost:3001
-  - **Node 2:** http://localhost:3002
-  - **Node 3:** http://localhost:3003
-
-- **Access Express Servers from Other Nodes:**
-
-  Docker allows the containers to communicate directly using container names. Here’s how you can make HTTP requests between the containers:
-
-  - **Node 1 to Node 2:**
-
-    ```bash
-    curl http://ming-node2:3000
-    ```
-
-  - **Node 2 to Node 3:**
-
-    ```bash
-    curl http://ming-node3:3000
-    ```
-
-  You can use this method to simulate communication between nodes in a distributed network.
-
-### **5. File Structure**
-
-```plaintext
-.
-├── docker-compose.yml    # Docker Compose configuration
-├── node1                 # Contains Dockerfile and Express app for Node 1
+├── docker-compose.yml       # Docker Compose configuration
+├── node1/                   # Express server for Node 1
 │   ├── Dockerfile
 │   └── server.js
-├── node2                 # Contains Dockerfile and Express app for Node 2
+├── node2/                   # Express server for Node 2
 │   ├── Dockerfile
 │   └── server.js
-└── node3                 # Contains Dockerfile and Express app for Node 3
-    ├── Dockerfile
-    └── server.js
+├── node3/                   # Express server for Node 3
+│   ├── Dockerfile
+│   └── server.js
+├── uptime-kuma-data/         # Data for Uptime Kuma
+└── README.md                # Project Documentation
 ```
 
-Each node directory contains a `Dockerfile` for building the container and a `server.js` file for the Express server.
+## Docker Compose Configuration
 
-### **6. Express Server**
+- **Node Containers**:
+  Each node runs an Express server and exposes it on a unique port. The nodes are networked together using Docker’s `bridge` network, allowing inter-node communication.
 
-The `server.js` file contains a basic Express server configuration for each node:
+- **Portainer**:
+  Portainer is a lightweight management UI that helps manage your Docker environments. It is exposed on port `9000` and provides an intuitive GUI for container management.
 
-```javascript
-const express = require('express');
-const app = express();
-const port = 3000;
+- **Uptime Kuma**:
+  Uptime Kuma is an open-source monitoring tool that will check the uptime of services running in this distributed system. It is exposed on port `8080`.
 
-app.get('/', (req, res) => {
-  res.send('Hello from Node X!');
-});
+## Next Milestone
 
-app.listen(port, () => {
-  console.log(`Node X is running on port ${port}`);
-});
-```
+- **Phase 2**: In the next phase, we will implement inter-node communication, allowing nodes to transfer files and send requests to each other using the internal network.
+- **Security Enhancements**: Add secure access and authentication mechanisms for Portainer and Uptime Kuma.
+- **Distributed Task Management**: Introduce a decentralized task management system where nodes can collaborate and share workloads.
 
-Each node runs on port 3000 internally. You can modify the `server.js` files to simulate different services or interactions between nodes.
+## Troubleshooting
 
-## **Next Milestone**
+- If you encounter any issues, check the Docker logs for detailed error messages:
 
-The current phase focuses on basic communication between nodes using HTTP requests. The next milestones will introduce more advanced features to simulate a realistic distributed network.
+  ```bash
+  docker-compose logs
+  ```
 
-### **Phase 2: SSH Access and File Transfer Between Nodes**
-- **Set up SSH servers** on each node to allow secure SSH access between containers.
-- **File transfer** capabilities using `scp` between containers.
-- **Expose ports** and configure proper networking for seamless file transfer and remote access.
-
-### **Phase 3: Dynamic Load Balancing and Redundancy**
-- Implement **dynamic load balancing** where nodes can distribute tasks among each other.
-- Introduce **replication and redundancy** to handle node failures, ensuring high availability.
-
-### **Phase 4: Decentralized Hosting for DApps**
-- Set up a decentralized hosting environment using Docker containers as distributed node servers.
-- Enable **blockchain-based data storage** and ensure decentralized control of hosted projects.
+- Ensure the required ports are not in use by other services before running the Docker containers.
 
 ---
 
-## **Conclusion**
-
-This project demonstrates a foundational setup for simulating a distributed network using Docker. As we progress through the milestones, this environment will evolve to include more complex networking, redundancy, and decentralized hosting capabilities. Stay tuned!
-
+This `README.md` should give clear instructions to users on how to set up and interact with the containers, monitor uptime, and manage the services via Portainer. The next milestone section outlines future goals to extend the functionality of the system.
 ## **Screenshots**
 ![Screenshot](https://raw.githubusercontent.com/MingInc/ming-network-simulation/refs/heads/main/screenshots/1.png)
+
+![Screenshot2](https://raw.githubusercontent.com/MingInc/ming-network-simulation/refs/heads/main/screenshots/1.png)

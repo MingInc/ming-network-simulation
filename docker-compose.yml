@@ -33,6 +33,32 @@ services:
     environment:
       - NODE_ID=node3
 
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    volumes:
+      - uptime-kuma-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8080:3001  # <Host Port>:<Container Port>
+    restart: always
+
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # Exposing Docker socket
+      - portainer_data:/data
+    ports:
+      - 9000:9000  # Expose Portainer on port 9000
+    networks:
+      - ming-network
+    restart: always
+
+volumes:
+  uptime-kuma-data:
+  portainer_data:
+
 networks:
   ming-network:
     driver: bridge
